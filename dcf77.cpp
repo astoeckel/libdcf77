@@ -146,13 +146,6 @@ bool data::valid(bool time_and_date_only) const
  * Class "decoder"                                                            *
  ******************************************************************************/
 
-decoder::state decoder::push_sync()
-{
-	state res = state::invalid_result;
-
-	return res;
-}
-
 decoder::state decoder::sample(bool value, uint16_t t)
 {
 	auto event = m_debouncer.sample(value, t);
