@@ -1,7 +1,7 @@
 # libdcf77
 
 Cross-platform C++ decoder for the German DCF77 longwave time signal radio station.
-The library is intended to be used on a 8-bit microcontroller -- however, the code has
+The library is intended to be used on a 8-bit microcontroller ‒ however, the code has
 no dependency on any execution environment whatsoever. It can be used with any low cost
 DCF77 receiver circuit, such as one of the following:
 
@@ -23,7 +23,7 @@ Consult the datasheet of your receiver module for more info.
 
 ## Example
 
-The following example implements a DCF77 receiver on an AVR microcontroller (here and ATMega32).
+The following example implements a DCF77 receiver on an AVR microcontroller (here an ATMega32).
 The reciever is connected to pin PD3. In this example case, the receiver input signal is inverted.
 It outputs a "1" when the DCF77 carrier is dampened.
 
@@ -70,7 +70,7 @@ int main()
 
 ## License
 
-libdcf77 -- Cross Platform C++ DCF77 decoder
+libdcf77 — Cross Platform C++ DCF77 decoder
 
 Copyright (C) 2016  Andreas Stöckel
 
