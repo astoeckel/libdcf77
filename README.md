@@ -1,25 +1,30 @@
 # libdcf77
 
 Cross-platform C++ decoder for the German DCF77 longwave time signal radio station.
-The library is intended to be used on a 8-bit microcontroller ‒ however, the code has
-no dependency on any execution environment whatsoever. It can be used with any low-cost
-DCF77 receiver circuit, such as one of the following:
+The library is intended to be used on an 8-bit microcontroller ‒ however, the code has
+no dependency on any execution environment whatsoever. It can be used with low-cost
+DCF77 receiver circuits, such as one of the following:
 
 * [Pollin Module](http://www.pollin.de/shop/dt/NTQ5OTgxOTk-/)
 * [Reichelt Module](https://www.reichelt.de/Bausaetze/DCF77-MODUL/3/index.html?ACTION=3&GROUPID=7836&ARTICLE=57772&OFFSET=16&)
 * [Conrad Module](http://www.conrad.com/ce/en/product/641138/DCF-receiver-module-Compatible-with-C-Control)
 
 Interfacing with the hardware is left as an exercise to the reader. Note that some of the
-modules might require an external transistor to drive the microcontroller port pin.
-Consult the datasheet of your receiver module for more info.
+modules may require an external transistor to drive the microcontroller port. Consult the datasheet of your receiver module for more info.
 
 ## Features
+
+What it does:
 
 * Written in C++14
 * Software low-pass filter and Schmitt-Trigger to denoise the signal from the receiver
 * Signal validation
-* Phase compensation
+* Phase compensation with millisecond resolution
 * Requires about 2kB program memory and 40 bytes of RAM
+
+What it doesn't do:
+
+* Advanced signal processing such as a matched filtering, see [this project](https://github.com/udoklein/dcf77) for a receiver library which implements matched filtering.
 
 ## Example
 
