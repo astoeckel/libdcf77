@@ -33,15 +33,17 @@
 namespace dcf77 {
 
 /**
- * A digital low-pass filter with Schmitt-Trigger with user-definable
+ * A digital low-pass filter with Schmitt-Trigger and user-definable
  * hysteresis. The filter is a simple finite impulse response filter with a
- * single coefficient. The debounce filter allows to recover the input signal
- * phase.
+ * single coefficient (also known as moving average or exponential filter). As
+ * an important feature for time signal analysis, the debounce filter allows to
+ * recover the current input signal phase, allowing for a reconstruction of the
+ * current time.
  */
 class debounce {
 public:
 	/**
-	 * Structure describing the result of the debounce filter.
+	 * Structure describing the output of the debounce filter.
 	 */
 	struct result {
 		/**
@@ -95,8 +97,7 @@ private:
 
 public:
 	/**
-	 * Constructor of the debounce class, allows the user to define the
-	 * hysteresis.
+	 * Constructor of the debounce class with user-definable hysteresis.
 	 *
 	 * @param hysteresis is a value between zero and 255, which is mapped to a
 	 * value between zero and one hundred percent (for example, the default
@@ -113,8 +114,10 @@ public:
 	 * Processes a new sample.
 	 *
 	 * @param value is the input bit.
-	 * @param t is a monotonous timestamp in milliseconds. Used by the sample
-	 * to determine the number of filter steps.
+	 * @param t is a monotonous timestamp in milliseconds. This value is used
+	 * to determine the* number of filter steps. The longer the time that has
+	 * passed since the last call to "sample", the more filter steps are
+	 * required.
 	 */
 	const result &sample(bool value, uint16_t t);
 };
@@ -123,10 +126,12 @@ public:
 /**
  * The data union stores the data received from the DCF77 radio station. It
  * provides a view on both the incomming bitstream as a 64-bit integer, as well
- * as the corresponding raw fields. The provided access methods can be used to
- * validate and read the decoded data in a convenient manner. Data should only
- * be used if the valid() method evaluates to true. When using the decoder
- * class, this check is already performed.
+ * as the corresponding raw fields. The access methods provided by this class
+ * can be used to validate and read the decoded data in a convenient manner.
+ * Data should only be used if the valid() method evaluates to true. When using
+ * the decoder class, this check is already performed by the sample() method.
+ * The return value of that method informs about the validity of the
+ * information.
  */
 union data {
 	/**
