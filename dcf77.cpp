@@ -152,32 +152,11 @@ void USARTWriteChar(char data)
 	}
 	UDR = data;
 }
-void decoder::push_one()
-{
-	m_data_new.bitstream |= uint64_t(1) << m_state;
-	m_state++;
-}
-
-void decoder::push_zero() {
-	m_state++;
-}
 
 decoder::state decoder::push_sync()
 {
 	state res = state::invalid_result;
-	if (m_state < 59) {
-		m_data_new.bitstream = m_data_new.bitstream << (59 - m_state);
-		if (m_data_new.valid(true)) {
-			res = state::has_time_and_date;
-		}
-	} else if (m_data_new.valid(false)) {
-		res = state::has_complete;
-	}
-	if (res >= state::has_time_and_date) {
-		m_data_current = m_data_new;
-	}
-	m_state = 0;
-	m_data_new.bitstream = 0;
+
 	return res;
 }
 
@@ -188,18 +167,35 @@ decoder::state decoder::sample(bool value, uint16_t t)
 	if (event.edge) {
 		uint16_t dt = event.t - m_last_t;
 		if (!event.value) {
+			// Falling edge
 			if (dt > SYNC_HIGH_TIME - SLACK) {
-				res = push_sync();
+				// Handle a sync event
+				if (m_state < 59) {
+					m_data_new.bitstream = m_data_new.bitstream
+					                       << (59 - m_state);
+					if (m_data_new.valid(true)) {
+						res = state::has_time_and_date;
+					}
+				} else if (m_data_new.valid(false)) {
+					res = state::has_complete;
+				}
 				if (res >= state::has_time_and_date) {
+					m_data_current = m_data_new;
 					m_phase = event.t;
 				}
+				m_state = 0;
+				m_data_new.bitstream = 0;
 			}
 		}
 		if (event.value) {
-			if (dt > LOW_ONE_TIME - SLACK) {
-				push_one();
-			} else if (dt > LOW_ZERO_TIME - SLACK) {
-				push_zero();
+			// Rising edge
+			if (dt > LOW_ZERO_TIME - SLACK) {
+				// We received a "one" or a "zero"
+				if (dt > LOW_ONE_TIME - SLACK) {
+					// It's a "one"
+					m_data_new.bitstream |= uint64_t(1) << m_state;
+				}
+				m_state++;
 			}
 		}
 		m_last_t = event.t;

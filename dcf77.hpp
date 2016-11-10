@@ -52,12 +52,12 @@ public:
 		/**
 		 * Current output state.
 		 */
-		bool value: 1;
+		bool value : 1;
 
 		/**
 		 * True if a state transition occured just now.
 		 */
-		bool edge: 1;
+		bool edge : 1;
 
 		result() : t(0), value(false), edge(false) {}
 	};
@@ -94,6 +94,19 @@ private:
 	result m_result;
 
 public:
+	/**
+	 * Constructor of the debounce class, allows the user to define the
+	 * hysteresis.
+	 *
+	 * @param hysteresis is a value between zero and 255, which is mapped to a
+	 * value between zero and one hundred percent (for example, the default
+	 * value of 64 corresponds to 25 percent). This percentage p is then used to
+	 * derive the values at which the output is switched: if the current output
+	 * of the filter is zero, and the low-pass filtered value reaches 1 - p, the
+	 * filter output is set to one, otherwise, if the current filter output is
+	 * one and the low-pass filtered values reaches p, the output is set to
+	 * zero.
+	 */
 	debounce(uint8_t hysteresis = 64);
 
 	/**
@@ -103,7 +116,7 @@ public:
 	 * @param t is a monotonous timestamp in milliseconds. Used by the sample
 	 * to determine the number of filter steps.
 	 */
-	const result& sample(bool value, uint16_t t);
+	const result &sample(bool value, uint16_t t);
 };
 
 #pragma pack(push, 1)
@@ -269,10 +282,7 @@ union data {
 	 * If true, the timestamps will swtich from CEST to CET or vice versa in the
 	 * next hour.
 	 */
-	bool daylight_saving_leap_hour() const
-	{
-		return raw.dst_leap_hour;
-	}
+	bool daylight_saving_leap_hour() const { return raw.dst_leap_hour; }
 
 	/**
 	 * If true, the current hour ends with a leap second.
@@ -321,27 +331,27 @@ public:
 	/**
 	 * Enum describing the state of the decoder.
 	 */
-	enum class state: int8_t {
+	enum class state : int8_t {
 		/**
-		 * Currently, there is no result available.
-		 */
+	     * Currently, there is no result available.
+	     */
 		no_result = 0,
 
 		/**
-		 * A synchronisation bit has been received, but the data could not
-		 * be validated.
-		 */
+	     * A synchronisation bit has been received, but the data could not
+	     * be validated.
+	     */
 		invalid_result = -1,
 
 		/**
-		 * Time and date have been received and are valid, but supplementary
-		 * information is missing.
-		 */
+	     * Time and date have been received and are valid, but supplementary
+	     * information is missing.
+	     */
 		has_time_and_date = 1,
 
 		/**
-		 * An entire dataset is available.
-		 */
+	     * An entire dataset is available.
+	     */
 		has_complete = 2
 	};
 
@@ -369,19 +379,38 @@ private:
 	static constexpr uint16_t LOW_ONE_TIME = 200;
 
 	/**
-	 * Instance 
+	 * Instance of the "debouncer" class used to software-filter the input
+	 * signal.
 	 */
 	debounce m_debouncer;
 
+	/**
+	 * Timestamp at which the falling edge corresponding to the start of the
+	 * first second in a minute was received. Only updated when valid data is
+	 * received.
+	 */
 	uint16_t m_phase = 0;
-	uint16_t m_last_t = 0;
-	data m_data_new;
-	data m_data_current;
-	uint8_t m_state = 0xFF;
 
-	void push_one();
-	void push_zero();
-	state push_sync();
+	/**
+	 * Last timestamp when the "sample" method was called.
+	 */
+	uint16_t m_last_t = 0;
+
+	/**
+	 * Working data register. Incomming bits are written to this variable.
+	 */
+	data m_data_new;
+
+	/**
+	 * Valid data store. Valid received transmissions are stored in this
+	 * variable.
+	 */
+	data m_data_current;
+
+	/**
+	 * Current bit into which data is written.
+	 */
+	uint8_t m_state = 0;
 
 public:
 	/**

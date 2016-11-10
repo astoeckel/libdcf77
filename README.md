@@ -2,7 +2,7 @@
 
 Cross-platform C++ decoder for the German DCF77 longwave time signal radio station.
 The library is intended to be used on a 8-bit microcontroller ‒ however, the code has
-no dependency on any execution environment whatsoever. It can be used with any low cost
+no dependency on any execution environment whatsoever. It can be used with any low-cost
 DCF77 receiver circuit, such as one of the following:
 
 * [Pollin Module](http://www.pollin.de/shop/dt/NTQ5OTgxOTk-/)
