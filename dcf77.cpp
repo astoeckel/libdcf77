@@ -146,13 +146,6 @@ bool data::valid(bool time_and_date_only) const
  * Class "decoder"                                                            *
  ******************************************************************************/
 
-void USARTWriteChar(char data)
-{
-	while (!(UCSRA & (1 << UDRE))) {
-	}
-	UDR = data;
-}
-
 decoder::state decoder::push_sync()
 {
 	state res = state::invalid_result;
