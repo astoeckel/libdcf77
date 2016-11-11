@@ -134,7 +134,7 @@ bool data::valid(bool time_and_date_only) const
 	       && (raw.parity_minute == parity(raw.minute)) && // Check parity
 	       (raw.parity_hour == parity(raw.hour)) &&
 	       (raw.parity_date ==
-	        parity(uint32_t((bitstream & 0x7FFFFE000000000LL) >> 32))) &&
+	        parity(uint32_t((bitstream & 0x3FFFFF000000000LL) >> 32))) &&
 	       valid_bcd<5, 9>(raw.minute) && // Check BCD values
 	       valid_bcd<2, 3>(raw.hour) && valid_bcd<3, 1>(raw.day) &&
 	       (raw.day > 0) && (raw.day_of_week > 0) &&
