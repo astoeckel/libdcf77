@@ -59,8 +59,10 @@ int main()
 	dcf77::decoder dcf77_dec;
 	while (true) {
 		const bool dcf77_signal = (PIND & (1 << 3));
-
-		if (dcf77_dec.sample(!dcf77_signal, t) >=
+		cli();
+		uint16_t cur_t = t;
+		sei();
+		if (dcf77_dec.sample(!dcf77_signal, cur_t) >=
 		    dcf77::decoder::state::has_time_and_date) {
 			auto &d = dcf77_dec.get_data();
 			// Valid data has been received, do something with it
